@@ -10,6 +10,7 @@ from comtypes import CLSCTX_ALL
 from pycaw.pycaw import AudioUtilities, IAudioEndpointVolume
 from google.protobuf.json_format import MessageToDict
 import screen_brightness_control as sbcontrol
+from HLabel import HLabel
 
 pyautogui.FAILSAFE = False
 mp_drawing = mp.solutions.drawing_utils
@@ -38,11 +39,6 @@ class Gest(IntEnum):
     TWO_FINGER_CLOSED = 34
     PINCH_MAJOR = 35
     PINCH_MINOR = 36
-
-# Multi-handedness Labels
-class HLabel(IntEnum):
-    MINOR = 0
-    MAJOR = 1
 
 # Convert Mediapipe Landmarks to recognizable Gestures
 class HandRecog:
