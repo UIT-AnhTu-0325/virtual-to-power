@@ -3,7 +3,7 @@ from collections import deque
 import mediapipe as mp
 import numpy as np
 from utils import get_images, get_overlay
-from src.config import *
+from configs import *
 import torch
 
 mp_drawing = mp.solutions.drawing_utils
