@@ -23,6 +23,7 @@ canvas = np.zeros((480, 640, 3), dtype=np.uint8)
 is_drawing = False
 is_shown = False
 class_images = get_images("images", CLASSES)
+
 with mp_hands.Hands(
         max_num_hands=1,
         model_complexity=0,

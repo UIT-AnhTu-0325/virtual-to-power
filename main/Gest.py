@@ -3,10 +3,6 @@ from enum import IntEnum
 # Gesture Encodings 
 class Gest(IntEnum):
     # Binary Encoded
-    """
-    Enum for mapping all hand gesture to binary number.
-    """
-
     FIST = 0
     PINKY = 1
     RING = 2

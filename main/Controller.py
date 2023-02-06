@@ -7,48 +7,6 @@ from Gest import Gest
 
 # Executes commands according to detected gestures
 class Controller:
-    """
-    Executes commands according to detected gestures.
-
-    Attributes
-    ----------
-    tx_old : int
-        previous mouse location x coordinate
-    ty_old : int
-        previous mouse location y coordinate
-    flag : bool
-        true if V gesture is detected
-    grabflag : bool
-        true if FIST gesture is detected
-    pinchmajorflag : bool
-        true if PINCH gesture is detected through MAJOR hand,
-        on x-axis 'Controller.changesystembrightness', 
-        on y-axis 'Controller.changesystemvolume'.
-    pinchminorflag : bool
-        true if PINCH gesture is detected through MINOR hand,
-        on x-axis 'Controller.scrollHorizontal', 
-        on y-axis 'Controller.scrollVertical'.
-    pinchstartxcoord : int
-        x coordinate of hand landmark when pinch gesture is started.
-    pinchstartycoord : int
-        y coordinate of hand landmark when pinch gesture is started.
-    pinchdirectionflag : bool
-        true if pinch gesture movment is along x-axis,
-        otherwise false
-    prevpinchlv : int
-        stores quantized magnitued of prev pinch gesture displacment, from 
-        starting position
-    pinchlv : int
-        stores quantized magnitued of pinch gesture displacment, from 
-        starting position
-    framecount : int
-        stores no. of frames since 'pinchlv' is updated.
-    prev_hand : tuple
-        stores (x, y) coordinates of hand in previous frame.
-    pinch_threshold : float
-        step size for quantization of 'pinchlv'.
-    """
-
     tx_old = 0
     ty_old = 0
     trial = True
@@ -66,17 +24,14 @@ class Controller:
     pinch_threshold = 0.3
     
     def getpinchylv(hand_result):
-        """returns distance beween starting pinch y coord and current hand position y coord."""
         dist = round((Controller.pinchstartycoord - hand_result.landmark[8].y)*10,1)
         return dist
 
     def getpinchxlv(hand_result):
-        """returns distance beween starting pinch x coord and current hand position x coord."""
         dist = round((hand_result.landmark[8].x - Controller.pinchstartxcoord)*10,1)
         return dist
     
     def changesystembrightness():
-        """sets system brightness based on 'Controller.pinchlv'."""
         currentBrightnessLv = sbcontrol.get_brightness(display=0)/100.0
         currentBrightnessLv += Controller.pinchlv/50.0
         if currentBrightnessLv > 1.0:
@@ -86,7 +41,6 @@ class Controller:
         sbcontrol.fade_brightness(int(100*currentBrightnessLv) , start = sbcontrol.get_brightness(display=0))
     
     def changesystemvolume():
-        """sets system volume based on 'Controller.pinchlv'."""
         devices = AudioUtilities.GetSpeakers()
         interface = devices.Activate(IAudioEndpointVolume._iid_, CLSCTX_ALL, None)
         volume = cast(interface, POINTER(IAudioEndpointVolume))
@@ -99,12 +53,10 @@ class Controller:
         volume.SetMasterVolumeLevelScalar(currentVolumeLv, None)
     
     def scrollVertical():
-        """scrolls on screen vertically."""
         pyautogui.scroll(120 if Controller.pinchlv>0.0 else -120)
         
     
     def scrollHorizontal():
-        """scrolls on screen horizontally."""
         pyautogui.keyDown('shift')
         pyautogui.keyDown('ctrl')
         pyautogui.scroll(-120 if Controller.pinchlv>0.0 else 120)
@@ -114,16 +66,6 @@ class Controller:
          # Locate Hand to get Cursor Position
     # Stabilize cursor by Dampening
     def get_position(hand_result):
-        """
-        returns coordinates of current hand position.
-
-        Locates hand to get cursor position also stabilize cursor by 
-        dampening jerky motion of hand.
-
-        Returns
-        -------
-        tuple(float, float)
-        """
         point = 9
         position = [hand_result.landmark[point].x ,hand_result.landmark[point].y]
         sx,sy = pyautogui.size()
@@ -149,7 +91,6 @@ class Controller:
         return (x,y)
 
     def pinch_control_init(hand_result):
-        """Initializes attributes for pinch gesture."""
         Controller.pinchstartxcoord = hand_result.landmark[8].x
         Controller.pinchstartycoord = hand_result.landmark[8].y
         Controller.pinchlv = 0
@@ -158,23 +99,6 @@ class Controller:
 
     # Hold final position for 5 frames to change status
     def pinch_control(hand_result, controlHorizontal, controlVertical):
-        """
-        calls 'controlHorizontal' or 'controlVertical' based on pinch flags, 
-        'framecount' and sets 'pinchlv'.
-
-        Parameters
-        ----------
-        hand_result : Object
-            Landmarks obtained from mediapipe.
-        controlHorizontal : callback function assosiated with horizontal
-            pinch gesture.
-        controlVertical : callback function assosiated with vertical
-            pinch gesture. 
-        
-        Returns
-        -------
-        None
-        """
         if Controller.framecount == 5:
             Controller.framecount = 0
             Controller.pinchlv = Controller.prevpinchlv
@@ -204,8 +128,7 @@ class Controller:
                 Controller.prevpinchlv = lvx
                 Controller.framecount = 0
 
-    def handle_controls(gesture, hand_result):  
-        """Impliments all gesture functionality."""      
+    def handle_controls(gesture, hand_result):     
         x,y = None,None
         if gesture != Gest.PALM :
             x,y = Controller.get_position(hand_result)

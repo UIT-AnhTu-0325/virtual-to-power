@@ -10,36 +10,8 @@ from Controller import Controller
 pyautogui.FAILSAFE = False
 mp_drawing = mp.solutions.drawing_utils
 mp_hands = mp.solutions.hands
-        
-'''
-----------------------------------------  Main Class  ----------------------------------------
-    Entry point of Gesture Controller
-'''
 
 class GestureController:
-    """
-    Handles camera, obtain landmarks from mediapipe, entry point
-    for whole program.
-
-    Attributes
-    ----------
-    gc_mode : int
-        indicates weather gesture controller is running or not,
-        1 if running, otherwise 0.
-    cap : Object
-        object obtained from cv2, for capturing video frame.
-    CAM_HEIGHT : int
-        highet in pixels of obtained frame from camera.
-    CAM_WIDTH : int
-        width in pixels of obtained frame from camera.
-    hr_major : Object of 'HandRecog'
-        object representing major hand.
-    hr_minor : Object of 'HandRecog'
-        object representing minor hand.
-    dom_hand : bool
-        True if right hand is domaniant hand, otherwise False.
-        default True.
-    """
     gc_mode = 0
     cap = None
     CAM_HEIGHT = None
@@ -49,18 +21,12 @@ class GestureController:
     dom_hand = True
 
     def __init__(self):
-        """Initilaizes attributes."""
         GestureController.gc_mode = 1
         GestureController.cap = cv2.VideoCapture(0)
         GestureController.CAM_HEIGHT = GestureController.cap.get(cv2.CAP_PROP_FRAME_HEIGHT)
         GestureController.CAM_WIDTH = GestureController.cap.get(cv2.CAP_PROP_FRAME_WIDTH)
     
     def classify_hands(results):
-        """
-        sets 'hr_major', 'hr_minor' based on classification(left, right) of 
-        hand obtained from mediapipe, uses 'dom_hand' to decide major and
-        minor hand.
-        """
         left , right = None,None
         try:
             handedness_dict = MessageToDict(results.multi_handedness[0])
@@ -88,12 +54,6 @@ class GestureController:
             GestureController.hr_minor = right
 
     def start(self):
-        """
-        Entry point of whole programm, caputres video frame and passes, obtains
-        landmark from mediapipe and passes it to 'handmajor' and 'handminor' for
-        controlling.
-        """
-        
         handmajor = HandRecog(HLabel.MAJOR)
         handminor = HandRecog(HLabel.MINOR)
 
