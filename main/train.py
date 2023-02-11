@@ -40,15 +40,28 @@ def train(opt):
         torch.cuda.manual_seed(123)
     else:
         torch.manual_seed(123)
+        
+    # batch_size => num of pictures 
+    # epoch: vd 1000 pics. batchsize = 20. -> 50 times to train a whole dataset. ~ 1 epoch.
+    # ex: 20 epoch 20 * 50 = 1000. 
+    # data 12 3 4 5 ...1000. epoch 1 (1-32, 33-64, ...) -> epoch 2: (1, 554, 323 ...) ( 2, 434, 55, 44) 
     training_params = {"batch_size": opt.batch_size,
                        "shuffle": True}
 
     test_params = {"batch_size": opt.batch_size,
                    "shuffle": False}
 
+    # models: parammeteers.. 
     output_file = open(opt.saved_path + os.sep + "logs.txt", "w")
     output_file.write("Model's parameters: {}".format(vars(opt)))
 
+    # dataset.
+    # 0.8 train 0.1 test 0.1 validation.
+    # train -> modle learn 
+    # test -> model learn well or not. change config , model , optimizer -> train again -> compare test score
+    # validation -> best model -> score model learn 
+    
+    # 1000 apple pics with 0.8 ratio -> 800 first pics -> train 200 othoer -> test 
     training_set = MyDataset(opt.data_path, opt.total_images_per_class, opt.ratio, "train")
     training_generator = DataLoader(training_set, **training_params)
     print ("there are {} images for training phase".format(training_set.__len__()))
@@ -83,15 +96,15 @@ def train(opt):
     num_iter_per_epoch = len(training_generator)
     for epoch in range(opt.num_epochs):
         for iter, batch in enumerate(training_generator):
-            images, labels = batch
+            images, labels = batch # 32 pic - 32 label
             if torch.cuda.is_available():
                 images = images.cuda()
                 labels = labels.cuda()
-            optimizer.zero_grad()
-            predictions = model(images)
-            loss = criterion(predictions, labels)
+            optimizer.zero_grad() # init optimizer
+            predictions = model(images) # cho mo hinh doan
+            loss = criterion(predictions, labels) # kiem tra su khac biet loss
             loss.backward()
-            optimizer.step()
+            optimizer.step() # optiomizer
             training_metrics = get_evaluation(labels.cpu().numpy(), predictions.cpu().detach().numpy(),
                                               list_metrics=["accuracy"])
             print("Epoch: {}/{}, Iteration: {}/{}, Lr: {}, Loss: {}, Accuracy: {}".format(
