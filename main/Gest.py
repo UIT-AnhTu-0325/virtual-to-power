@@ -1,8 +1,6 @@
 from enum import IntEnum
 
-# Gesture Encodings 
 class Gest(IntEnum):
-    # Binary Encoded
     FIST = 0
     PINKY = 1
     RING = 2
@@ -14,7 +12,6 @@ class Gest(IntEnum):
     THUMB = 16    
     PALM = 31
     
-    # Extra Mappings
     V_GEST = 33
     TWO_FINGER_CLOSED = 34
     PINCH_MAJOR = 35
