@@ -6,6 +6,7 @@ from src.utils import get_images, get_overlay
 from src.config import *
 import torch
 
+#initial
 mp_drawing = mp.solutions.drawing_utils
 mp_drawing_styles = mp.solutions.drawing_styles
 mp_hands = mp.solutions.hands
