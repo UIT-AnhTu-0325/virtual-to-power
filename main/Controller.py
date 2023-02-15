@@ -7,21 +7,38 @@ from Gest import Gest
 
 # Executes commands according to detected gestures
 class Controller:
-    tx_old = 0
+   
+    #[tx_old]: previous mouse location x coordinate
+    tx_old = 0   
+    #[ty_old]: previous mouse location y coordinate
     ty_old = 0
-    trial = True
-    flag = False
+    #[flag]: true if V gesture is detected
+    flag = False 
+    #[grabflag]: true if FIST gesture is detected
     grabflag = False
+
+    trial = True
+    #[pinchmajorflag] true if PINCH gesture is detected through MAJOR hand
     pinchmajorflag = False
+    #[pinchminorflag] true if PINCH gesture is detected through MINOR hand
     pinchminorflag = False
+    #[pinchstartxcoord]: x coordinate of hand landmark when pinch gesture is started.
     pinchstartxcoord = None
+    #[pinchstartycoord]: y coordinate of hand landmark when pinch gesture is started.
     pinchstartycoord = None
+    #[pinchdirectionflag]: true if pinch gesture movment is along x-axis,
     pinchdirectionflag = None
+    #[prevpinchlv]: stores quantized magnitued of prev pinch gesture displacment, from 
     prevpinchlv = 0
+    #[pinchlv]: stores quantized magnitued of pinch gesture displacment, from 
     pinchlv = 0
+    #[framecount]: stores no. of frames since 'pinchlv' is updated.
     framecount = 0
+    #[prev_hand]: stores (x, y) coordinates of hand in previous frame.
     prev_hand = None
+    #[pinch_threshold]: step size for quantization of 'pinchlv'.
     pinch_threshold = 0.3
+    
     
     def getpinchylv(hand_result):
         dist = round((Controller.pinchstartycoord - hand_result.landmark[8].y)*10,1)
@@ -31,6 +48,8 @@ class Controller:
         dist = round((hand_result.landmark[8].x - Controller.pinchstartxcoord)*10,1)
         return dist
     
+
+    #Change brightness 
     def changesystembrightness():
         currentBrightnessLv = sbcontrol.get_brightness(display=0)/100.0
         currentBrightnessLv += Controller.pinchlv/50.0
@@ -40,6 +59,7 @@ class Controller:
             currentBrightnessLv = 0.0       
         sbcontrol.fade_brightness(int(100*currentBrightnessLv) , start = sbcontrol.get_brightness(display=0))
     
+    #Change systemVolume 
     def changesystemvolume():
         devices = AudioUtilities.GetSpeakers()
         interface = devices.Activate(IAudioEndpointVolume._iid_, CLSCTX_ALL, None)
@@ -52,6 +72,7 @@ class Controller:
             currentVolumeLv = 0.0
         volume.SetMasterVolumeLevelScalar(currentVolumeLv, None)
     
+     #Scroll
     def scrollVertical():
         pyautogui.scroll(120 if Controller.pinchlv>0.0 else -120)
         
